@@ -75,6 +75,10 @@ func (s *Store) handleBuatPeminjaman(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, pesan)
 		return
 	}
+	if s.adaBentrok(p, 0) {
+		writeError(w, http.StatusConflict, "kapasitas sumber daya pada slot tersebut terlampaui")
+		return
+	}
 	writeJSON(w, http.StatusCreated, s.tambahPeminjaman(p))
 }
 
@@ -121,4 +125,52 @@ func (s *Store) handleDetailPeminjaman(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	writeJSON(w, http.StatusOK, s.peminjaman[idx])
+}
+
+func (s *Store) handlePerbaruiPeminjaman(w http.ResponseWriter, r *http.Request) {
+	id, ok := parseID(r)
+	if !ok {
+		writeError(w, http.StatusBadRequest, "id harus berupa angka")
+		return
+	}
+	idx := s.indeksPeminjaman(id)
+	if idx < 0 {
+		writeError(w, http.StatusNotFound, "peminjaman tidak ditemukan")
+		return
+	}
+	var in peminjamanInput
+	if !decodeBody(r, &in) {
+		writeError(w, http.StatusBadRequest, "body harus berupa JSON yang valid")
+		return
+	}
+	p, pesan := s.validasiPeminjaman(in)
+	if pesan != "" {
+		writeError(w, http.StatusBadRequest, pesan)
+		return
+	}
+	if s.adaBentrok(p, id) {
+		writeError(w, http.StatusConflict, "kapasitas sumber daya pada slot tersebut terlampaui")
+		return
+	}
+
+	p.ID = id
+	p.Status = s.peminjaman[idx].Status
+	p.PaketID = s.peminjaman[idx].PaketID
+	s.peminjaman[idx] = p
+	writeJSON(w, http.StatusOK, p)
+}
+
+func (s *Store) handleHapusPeminjaman(w http.ResponseWriter, r *http.Request) {
+	id, ok := parseID(r)
+	if !ok {
+		writeError(w, http.StatusBadRequest, "id harus berupa angka")
+		return
+	}
+	idx := s.indeksPeminjaman(id)
+	if idx < 0 {
+		writeError(w, http.StatusNotFound, "peminjaman tidak ditemukan")
+		return
+	}
+	s.peminjaman = append(s.peminjaman[:idx], s.peminjaman[idx+1:]...)
+	w.WriteHeader(http.StatusNoContent)
 }

@@ -16,6 +16,11 @@ func NewHandler() http.Handler {
 	mux.HandleFunc("POST /peminjaman", s.handleBuatPeminjaman)
 	mux.HandleFunc("GET /peminjaman", s.handleDaftarPeminjaman)
 	mux.HandleFunc("GET /peminjaman/{id}", s.handleDetailPeminjaman)
+	mux.HandleFunc("PUT /peminjaman/{id}", s.kunci(s.handlePerbaruiPeminjaman))
+	mux.HandleFunc("DELETE /peminjaman/{id}", s.kunci(s.handleHapusPeminjaman))
+
+	mux.HandleFunc("POST /paket-peminjaman", s.kunci(s.handleBuatPaket))
+	mux.HandleFunc("DELETE /paket-peminjaman/{id}", s.kunci(s.handleHapusPaket))
 
 	// Supaya path yang tidak dikenal tetap membalas JSON, bukan teks biasa.
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
