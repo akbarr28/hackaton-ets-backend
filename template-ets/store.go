@@ -86,6 +86,22 @@ func (s *Store) adaBentrok(p Peminjaman, kecualiID int) bool {
 	return false
 }
 
+func (s *Store) cariPenghalang(p Peminjaman) []int {
+	ids := []int{}
+	for _, q := range s.peminjaman {
+		if q.Status != "aktif" {
+			continue
+		}
+		if q.SumberDayaID != p.SumberDayaID || q.Tanggal != p.Tanggal {
+			continue
+		}
+		if q.SlotMulai <= p.SlotSelesai && q.SlotSelesai >= p.SlotMulai {
+			ids = append(ids, q.ID)
+		}
+	}
+	return ids
+}
+
 func (s *Store) kunci(h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		s.mu.Lock()

@@ -17,6 +17,13 @@ func writeError(w http.ResponseWriter, status int, pesan string) {
 	writeJSON(w, status, map[string]string{"error": pesan})
 }
 
+func writeBentrok(w http.ResponseWriter, pesan string, ids []int) {
+	writeJSON(w, http.StatusConflict, map[string]any{
+		"error":          pesan,
+		"bentrok_dengan": ids,
+	})
+}
+
 func decodeBody(r *http.Request, dst any) bool {
 	return json.NewDecoder(r.Body).Decode(dst) == nil
 }
@@ -76,7 +83,7 @@ func (s *Store) handleBuatPeminjaman(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if s.adaBentrok(p, 0) {
-		writeError(w, http.StatusConflict, "kapasitas sumber daya pada slot tersebut terlampaui")
+		writeBentrok(w, "slot sudah terpakai", s.cariPenghalang(p))
 		return
 	}
 	writeJSON(w, http.StatusCreated, s.tambahPeminjaman(p))

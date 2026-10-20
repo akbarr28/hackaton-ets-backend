@@ -22,4 +22,19 @@ Log yang jujur tidak mengurangi nilai, sebanyak apa pun AI dipakai. Yang mengura
 ## Routing
 - Prompt: sama dengan di atas
 - Dipakai: NewHandler() dan main() di main.go
-- Diubah: <isi sesuai kenyataan>
+- Diubah: Tidak ada perubahan logika pada commit 1. Pada commit 2 setiap handler dibungkus s.kunci() (lihat entri B5-B7).
+
+## Deteksi bentrok per slot, PUT/DELETE, dan mutex (B5-B7)
+- Prompt: sama dengan di atas, untuk commit 2 (B4-B7 dan fitur khas).
+- Dipakai: unitTerpakai(), adaBentrok(), kunci() di store.go; pemeriksaan 409 di handleBuatPeminjaman(); handlePerbaruiPeminjaman() dan handleHapusPeminjaman() di handler.go; TestBersamaan di main_test.go.
+- Diubah: Tidak ada perubahan logika. Saya menjalankan TestBersamaan (50 request ke slot yang sama, hasilnya tepat satu 201) dan mencoba melepas mutex untuk melihat sendiri bahwa hasilnya tidak lagi satu 201.
+
+## Peminjaman paket, fitur khas persona D
+- Prompt: sama dengan di atas.
+- Dipakai: paket.go (handleBuatPaket, handleHapusPaket), rute /paket-peminjaman di main.go, TestPaketAtomik di main_test.go.
+- Diubah: Tidak ada perubahan logika. Saya mempelajari tiga tahap (validasi semua item, cek bentrok semua item, baru simpan) dan alasan id paket baru dibagikan di tahap terakhir.
+
+## Change request B: bentrok_dengan pada 409
+- Prompt: "bantu saya mengerjakan checkpoint 3 langkah demi langkah sesuai requirement perubahan pada file yang saya attach" (lembar CR-B).
+- Dipakai: cariPenghalang() di store.go; writeBentrok() dan perubahan handleBuatPeminjaman() di handler.go; TestBentrokDenganDaftarPenghalang di bentrok_test.go.
+- Diubah: Tidak ada perubahan logika. Saya memastikan PUT dan paket tidak ikut berubah, dan menguji contoh dari lembar (slot 3-5 hasilnya [1, 2], slot 1-2 hasilnya [1]).
