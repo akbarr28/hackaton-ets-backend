@@ -1,13 +1,13 @@
 # PinjamKampus API
 
-- Nama dan NRP:
-- Persona:
+- Nama dan NRP: Mohammad Akbar H. B
+- Persona: Panitia acara
 - Cara menjalankan: `go run .` lalu buka http://localhost:8080
 
 ## Fitur
-- [ ] B1 Sumber daya
-- [ ] B2 Buat peminjaman
-- [ ] B3 Lihat peminjaman (daftar, filter, detail)
+- [x] B1 Sumber daya
+- [x] B2 Buat peminjaman
+- [x] B3 Lihat peminjaman (daftar, filter, detail)
 - [ ] B4 Validasi dan error JSON
 - [ ] B5 Deteksi bentrok (409)
 - [ ] B6 Ubah dan hapus
